@@ -21,3 +21,15 @@ rsample::assessment
 
 #' @import vctrs
 NULL
+
+#' @importFrom cluster pam
+NULL
+
+#' @importFrom blockCV spatialBlock
+NULL
+
+#' @importFrom sf st_as_sf
+NULL
+
+#' @import ggplot2
+NULL

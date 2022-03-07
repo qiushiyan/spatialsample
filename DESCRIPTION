@@ -21,16 +21,19 @@ BugReports: https://github.com/tidymodels/spatialsample/issues
 Depends: 
     R (>= 3.4)
 Imports:
+    blockCV,
+    cluster,
     dplyr (>= 1.0.0),
     purrr,
     rlang,
+    sf,
     rsample (>= 0.0.9),
     tibble,
     tidyselect,
-    vctrs (>= 0.3.6)
+    vctrs (>= 0.3.6),
+    ggplot2
 Suggests: 
     covr,
-    ggplot2,
     knitr,
     modeldata,
     rmarkdown,

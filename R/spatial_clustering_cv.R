@@ -1,86 +1,120 @@
-#' Spatial or Cluster Cross-Validation
+#' Spatial Cross-Validation
 #'
-#' Spatial or cluster cross-validation splits the data into V groups of
-#'  disjointed sets using k-means clustering of some variables, typically
-#'  spatial coordinates. A resample of the analysis data consists of V-1 of the
-#'  folds/clusters while the assessment set contains the final fold/cluster. In
-#'  basic spatial cross-validation (i.e. no repeats), the number of resamples
-#'  is equal to V.
+#' Spatial cross-validation splits the data into V groups of disjointed sets.
+#' These sets are separated using spatial coordinates such that observations
+#' within the set are geographically closer to each other. This is helpful to
+#' reduce spatial autocorrelation compared to random cross validation.
 #'
-#' @details
-#' The variables in the `coords` argument are used for k-means clustering of
-#'  the data into disjointed sets, as outlined in Brenning (2012). These
-#'  clusters are used as the folds for cross-validation. Depending on how the
-#'  data are distributed spatially, there may not be an equal number of points
-#'  in each fold.
+#' @details The variables in the `coords` argument are used for k-means
+#' clustering of the data into disjointed sets, as outlined in Brenning (2012).
+#' These clusters are used as the folds for cross-validation. Depending on how
+#' the data are distributed spatially, there may not be an equal number of
+#' points in each fold.
+#'
+#' [spatial_clustering_cv] uses clustering algorithms to create spatial
+#' clusters. A resample of the analysis data consists of V-1 of the
+#' folds/clusters while the assessment set contains the final fold/cluster. In
+#' basic spatial cross-validation (i.e. no repeats), the number of resamples is
+#' equal to V.
+#'
+#' [spatial_block_cv] makes partitions with spatial blocks or buffers and
+#' allocate them into cross validation folds. Blocks are units of geographical
+#' area (e.g. rectangles, spatial polygons and buffers of specific distance)
+#' Within these units, all species data are treated together—for instance,
+#' allocated to the same fold of cv. Several blocks could be allocated to one cv
+#' fold.
 #'
 #' @param data A data frame.
-#' @param coords A vector of variable names, typically spatial coordinates,
-#'  to partition the data into disjointed sets via k-means clustering.
+#' @param coords A vector of variable names, typically spatial coordinates, to
+#'   partition the data into disjointed sets via k-means clustering.
 #' @param v The number of partitions of the data set.
-#' @param ... Extra arguments passed on to [stats::kmeans()].
+#' @param method A character string for clustering algorithm (i.e., "kmeans" or
+#'   "kmedoids")
+#' @param ... Extra arguments passed on to clustering functions,
+#'   [stats::kmeans()] for kmeans, and.
 #' @export
 #' @return A tibble with classes `spatial_cv`, `rset`, `tbl_df`, `tbl`, and
-#'  `data.frame`. The results include a column for the data split objects and
-#'  an identification variable `id`.
+#'   `data.frame`. The results include a column for the data split objects and
+#'   an identification variable `id`.
 #'
 #' @references
 #'
 #' A. Brenning, "Spatial cross-validation and bootstrap for the assessment of
 #' prediction rules in remote sensing: The R package sperrorest," 2012 IEEE
-#' International Geoscience and Remote Sensing Symposium, Munich, 2012,
-#' pp. 5372-5375, doi: 10.1109/IGARSS.2012.6352393.
+#' International Geoscience and Remote Sensing Symposium, Munich, 2012, pp.
+#' 5372-5375, doi: 10.1109/IGARSS.2012.6352393.
 #'
 #' @examples
 #' data(ames, package = "modeldata")
 #' spatial_clustering_cv(ames, coords = c(Latitude, Longitude), v = 5)
+#'
 #' @export
-spatial_clustering_cv <- function(data, coords, v = 10, ...) {
-  coords <- tidyselect::eval_select(rlang::enquo(coords), data = data)
+spatial_clustering_cv <- function(data,
+                                  coords,
+                                  v = 10,
+                                  method = c("kmeans", "kmedoids"),
+                                  ...) {
+    coords <- tidyselect::eval_select(rlang::enquo(coords), data = data)
+    if (is_empty(coords)) {
+        rlang::abort("`coords` are required and must be variables in `data`.")
+    }
+    method <- match.arg(method)
 
-  if (is_empty(coords)) {
-    rlang::abort("`coords` are required and must be variables in `data`.")
-  }
+    split_objs <- spatial_clustering_splits(data = data, coords = coords, v = v, method = method, ...)
 
-  split_objs <- spatial_clustering_splits(data = data, coords = coords, v = v, ...)
+    ## We remove the holdout indices since it will save space and we can
+    ## derive them later when they are needed.
 
-  ## We remove the holdout indices since it will save space and we can
-  ## derive them later when they are needed.
+    split_objs$splits <- map(split_objs$splits, rm_out)
 
-  split_objs$splits <- map(split_objs$splits, rm_out)
+    ## Save some overall information
 
-  ## Save some overall information
+    cv_att <- list(v = v, repeats = 1)
 
-  cv_att <- list(v = v, repeats = 1)
-
-  new_rset(
-    splits = split_objs$splits,
-    ids = split_objs[, grepl("^id", names(split_objs))],
-    attrib = cv_att,
-    subclass = c("spatial_clustering_cv", "rset")
-  )
+    new_rset(
+        splits = split_objs$splits,
+        ids = split_objs[, grepl("^id", names(split_objs))],
+        attrib = cv_att,
+        subclass = c("spatial_clustering_cv", "rset")
+    )
 }
 
-spatial_clustering_splits <- function(data, coords, v = 10, ...) {
-  if (!is.numeric(v) || length(v) != 1) {
-    rlang::abort("`v` must be a single integer.")
-  }
 
-  n <- nrow(data)
-  clusters <- kmeans(data[coords], centers = v, ...)
-  folds <- clusters$cluster
-  idx <- seq_len(n)
-  indices <- split_unnamed(idx, folds)
-  indices <- lapply(indices, default_complement, n = n)
-  split_objs <- purrr::map(indices, make_splits,
-    data = data,
-    class = "spatial_clustering_split"
-  )
-  tibble::tibble(
-    splits = split_objs,
-    id = names0(length(split_objs), "Fold")
-  )
+spatial_clustering_splits <- function(data, coords, v = 10, method, ...) {
+    if (!is.numeric(v) || length(v) != 1) {
+        rlang::abort("`v` must be a single integer.")
+    }
+
+    n <- nrow(data)
+
+    folds <- switch(method,
+           "kmeans" = split_kmeans(data = data, coords = coords, v = v, ...),
+           "kmedoids" = split_kmedoids(data = data, coords = coords, v = v, ...)
+    )
+
+    idx <- seq_len(n)
+    indices <- split_unnamed(idx, folds)
+    indices <- lapply(indices, default_complement, n = n)
+    split_objs <- purrr::map(indices, make_splits,
+                             data = data,
+                             class = "spatial_clustering_split"
+    )
+    tibble::tibble(
+        splits = split_objs,
+        id = names0(length(split_objs), "Fold")
+    )
 }
+
+split_kmeans <- function(data, coords, v, ...) {
+    clusters <- kmeans(data[coords], centers = v, ...)
+    clusters$cluster
+}
+
+split_kmedoids <- function(data, coords, v, ...) {
+    clusters <- cluster::pam(data[coords], k = v, ...)
+    clusters$clustering
+}
+
 
 #' @export
 print.spatial_clustering_cv <- function(x, ...) {

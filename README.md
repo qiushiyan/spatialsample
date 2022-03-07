@@ -49,6 +49,8 @@ devtools::install_github("tidymodels/spatialsample")
 
 ## Example
 
+### Clustering Cross Validation
+
 The most straightforward spatial resampling strategy with the lightest
 dependencies is `spatial_clustering_cv()`, which uses k-means clustering
 to identify cross-validation folds:
@@ -61,7 +63,7 @@ set.seed(1234)
 folds <- spatial_clustering_cv(ames, coords = c("Latitude", "Longitude"), v = 5)
 
 folds
-#> #  5-fold spatial cross-validation 
+#> #  5-fold spatial clustering cross-validation 
 #> # A tibble: 5 × 2
 #>   splits             id   
 #>   <list>             <chr>
@@ -106,6 +108,56 @@ walk(folds$splits, plot_splits)
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-.gif" width="100%" />
+
+comparing kmeans and kmedoids
+
+``` r
+folds_kmedoids <- spatial_clustering_cv(ames, coords = c("Latitude", "Longitude"), v = 5, method = "kmedoids")
+
+walk(folds_kmedoids$splits, plot_splits)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-.gif" width="100%" />
+
+### Blocking Cross Validation
+
+``` r
+block_folds <- spatial_block_cv(ames, coords = c(Longitude, Latitude), 
+                 allocation = "systematic", 
+                 save_blocks = TRUE)
+
+block_folds
+#> #  10-fold spatial blocking cross-validation 
+#> # A tibble: 10 × 2
+#>    splits             id    
+#>    <list>             <chr> 
+#>  1 <split [2458/472]> Fold01
+#>  2 <split [2407/523]> Fold02
+#>  3 <split [2792/138]> Fold03
+#>  4 <split [2790/140]> Fold04
+#>  5 <split [2757/173]> Fold05
+#>  6 <split [2713/217]> Fold06
+#>  7 <split [2506/424]> Fold07
+#>  8 <split [2558/372]> Fold08
+#>  9 <split [2601/329]> Fold09
+#> 10 <split [2779/151]> Fold10
+```
+
+``` r
+attr(block_folds, "blocks") |> 
+  ggplot() + 
+  geom_sf(aes(fill = folds), show.legend = FALSE) + 
+  geom_sf_text(aes(label = folds)) + 
+  geom_sf(data = sf::st_as_sf(ames, coords = c("Longitude", "Latitude"),
+                              crs = 4326), color = "black", fill = "white") + 
+  scale_fill_brewer(type = "qual") 
+#> Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
+#> give correct results for longitude/latitude data
+#> Warning in RColorBrewer::brewer.pal(n, pal): n too large, allowed maximum for palette Accent is 8
+#> Returning the palette you asked for with that many colors
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Contributing
 

@@ -28,3 +28,14 @@ split_unnamed <- function(x, f) {
   out <- split(x, f)
   unname(out)
 }
+
+## Tidy select spatial coordinates
+extract_coords <- function(data, coords) {
+    coords <- tidyselect::eval_select(rlang::enquo(coords), data = data)
+    if (is_empty(coords)) {
+        rlang::abort("`coords` are required and must be variables in `data`.")
+    }
+    coords
+}
+
+

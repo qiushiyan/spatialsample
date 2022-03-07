@@ -12,6 +12,12 @@
 #' @keywords internal
 pretty.spatial_clustering_cv <- function(x, ...) {
   details <- attributes(x)
-  res <- paste0(details$v, "-fold spatial cross-validation")
+  res <- paste0(details$v, "-fold spatial clustering cross-validation")
+  res
+}
+
+pretty.spatial_block_cv <- function(x, ...) {
+  details <- attributes(x)
+  res <- paste0(details$v, "-fold spatial blocking cross-validation")
   res
 }
