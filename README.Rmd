@@ -110,14 +110,14 @@ walk(folds_kmedoids$splits, plot_splits)
 ```{r}
 block_folds <- spatial_block_cv(ames, coords = c(Longitude, Latitude), 
                  allocation = "systematic", 
-                 crs = 4269, 
+                 crs = 2163, 
                  save_blocks = TRUE)
 
 block_folds
 ```
 
 
-```{r, warning = FALSE, message = FALSE}
+```{r, fig.width = 7}
 blocks <- attr(block_folds, "blocks")
 
 blocks |> 
@@ -125,12 +125,12 @@ blocks |>
   geom_sf(aes(fill = folds), show.legend = FALSE) + 
   geom_sf_text(aes(label = folds)) + 
   geom_sf(data = sf::st_as_sf(ames, coords = c("Longitude", "Latitude"),
-                              crs = 4269)) + 
+                              crs = 2163)) + 
   scale_fill_brewer() 
 ```
 
 
-```{r animation.hook='gifski', message = FALSE, warning = FALSE}
+```{r animation.hook='gifski', fig.width = 7}
 plot_blocks <- function(fold, df) {
   p <- df %>% 
     mutate(label = if_else(folds == fold, "Assessment", "Analysis")) %>% 

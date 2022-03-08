@@ -124,7 +124,7 @@ walk(folds_kmedoids$splits, plot_splits)
 ``` r
 block_folds <- spatial_block_cv(ames, coords = c(Longitude, Latitude), 
                  allocation = "systematic", 
-                 crs = 4269, 
+                 crs = 2163, 
                  save_blocks = TRUE)
 
 block_folds
@@ -132,16 +132,16 @@ block_folds
 #> # A tibble: 10 × 2
 #>    splits             id    
 #>    <list>             <chr> 
-#>  1 <split [2458/472]> Fold01
-#>  2 <split [2407/523]> Fold02
-#>  3 <split [2792/138]> Fold03
-#>  4 <split [2790/140]> Fold04
-#>  5 <split [2757/173]> Fold05
-#>  6 <split [2713/217]> Fold06
-#>  7 <split [2506/424]> Fold07
-#>  8 <split [2558/372]> Fold08
-#>  9 <split [2601/329]> Fold09
-#> 10 <split [2779/151]> Fold10
+#>  1 <split [2305/625]> Fold01
+#>  2 <split [2023/907]> Fold02
+#>  3 <split [2772/158]> Fold03
+#>  4 <split [2775/155]> Fold04
+#>  5 <split [2848/82]>  Fold05
+#>  6 <split [2692/238]> Fold06
+#>  7 <split [2711/219]> Fold07
+#>  8 <split [2657/273]> Fold08
+#>  9 <split [2784/146]> Fold09
+#> 10 <split [2803/127]> Fold10
 ```
 
 ``` r
@@ -152,8 +152,10 @@ blocks |>
   geom_sf(aes(fill = folds), show.legend = FALSE) + 
   geom_sf_text(aes(label = folds)) + 
   geom_sf(data = sf::st_as_sf(ames, coords = c("Longitude", "Latitude"),
-                              crs = 4269)) + 
+                              crs = 2163)) + 
   scale_fill_brewer() 
+#> Warning in RColorBrewer::brewer.pal(n, pal): n too large, allowed maximum for palette Blues is 9
+#> Returning the palette you asked for with that many colors
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
