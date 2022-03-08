@@ -145,7 +145,9 @@ block_folds
 ```
 
 ``` r
-attr(block_folds, "blocks") |> 
+blocks <- attr(block_folds, "blocks")
+
+blocks |> 
   ggplot() + 
   geom_sf(aes(fill = folds), show.legend = FALSE) + 
   geom_sf_text(aes(label = folds)) + 
@@ -155,6 +157,24 @@ attr(block_folds, "blocks") |>
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+``` r
+plot_blocks <- function(fold, df) {
+  p <- df %>% 
+    mutate(label = if_else(folds == fold, "Assessment", "Analysis")) %>% 
+    group_by(label) %>% 
+    summarise(label = first(label)) %>% 
+    ggplot() + 
+    geom_sf(aes(fill = label), show.legend = FALSE) + 
+    geom_sf_text(aes(label = label))
+  
+  print(p)
+}
+
+walk(blocks$folds, plot_blocks, blocks)
+```
+
+<img src="man/figures/README-unnamed-chunk-7-.gif" width="100%" />
 
 ## Contributing
 

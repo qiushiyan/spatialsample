@@ -8,7 +8,7 @@
 spatial_block_cv <- function(data,
                              coords,
                              v = 10,
-                             nrow = 5,
+                             nrow = 6,
                              ncol = 5,
                              crs = 4326,
                              outcome = "",

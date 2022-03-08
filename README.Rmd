@@ -118,13 +118,32 @@ block_folds
 
 
 ```{r, warning = FALSE, message = FALSE}
-attr(block_folds, "blocks") |> 
+blocks <- attr(block_folds, "blocks")
+
+blocks |> 
   ggplot() + 
   geom_sf(aes(fill = folds), show.legend = FALSE) + 
   geom_sf_text(aes(label = folds)) + 
   geom_sf(data = sf::st_as_sf(ames, coords = c("Longitude", "Latitude"),
                               crs = 4269)) + 
   scale_fill_brewer() 
+```
+
+
+```{r animation.hook='gifski', message = FALSE, warning = FALSE}
+plot_blocks <- function(fold, df) {
+  p <- df %>% 
+    mutate(label = if_else(folds == fold, "Assessment", "Analysis")) %>% 
+    group_by(label) %>% 
+    summarise(label = first(label)) %>% 
+    ggplot() + 
+    geom_sf(aes(fill = label), show.legend = FALSE) + 
+    geom_sf_text(aes(label = label))
+  
+  print(p)
+}
+
+walk(blocks$folds, plot_blocks, blocks)
 ```
 
 
