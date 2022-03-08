@@ -49,27 +49,55 @@
 
 <div id="contributing-to-tidymodels" class="section level1">
 
-<p>For more detailed information about contributing to tidymodels packages, see our <a href="https://www.tidymodels.org/contribute/" class="external-link"><strong>development contributing guide</strong></a>.</p>
+<p>For more detailed information about contributing to tidymodels
+packages, see our <a href="https://www.tidymodels.org/contribute/" class="external-link"><strong>development
+contributing guide</strong></a>.</p>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
-<p>Typos or grammatical errors in documentation may be edited directly using the GitHub web interface, as long as the changes are made in the <em>source</em> file.</p>
-<ul><li>YES ✅: you edit a roxygen comment in an <code>.R</code> file in the <code>R/</code> directory.</li>
-<li>NO 🚫: you edit an <code>.Rd</code> file in the <code>man/</code> directory.</li>
-</ul><p>We use <a href="https://cran.r-project.org/package=roxygen2" class="external-link">roxygen2</a>, with <a href="https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html" class="external-link">Markdown syntax</a>, for documentation.</p>
+<p>Typos or grammatical errors in documentation may be edited directly
+using the GitHub web interface, as long as the changes are made in the
+<em>source</em> file.</p>
+<ul><li>YES ✅: you edit a roxygen comment in an <code>.R</code> file in the
+<code>R/</code> directory.</li>
+<li>NO 🚫: you edit an <code>.Rd</code> file in the <code>man/</code>
+directory.</li>
+</ul><p>We use <a href="https://cran.r-project.org/package=roxygen2" class="external-link">roxygen2</a>, with <a href="https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html" class="external-link">Markdown
+syntax</a>, for documentation.</p>
 </div>
 <div class="section level2">
 <h2 id="code">Code<a class="anchor" aria-label="anchor" href="#code"></a></h2>
-<p>Before you submit 🎯 a pull request on a tidymodels package, always file an issue and confirm the tidymodels team agrees with your idea and is happy with your basic proposal.</p>
-<p>The <a href="https://www.tidymodels.org/packages/" class="external-link">tidymodels packages</a> work together. Each package contains its own unit tests, while integration tests and other tests using all the packages are contained in <a href="https://github.com/tidymodels/extratests" class="external-link">extratests</a>.</p>
-<ul><li>For pull requests, we recommend that you <a href="https://usethis.r-lib.org/articles/articles/pr-functions.html" class="external-link">create a fork of this repo</a> with <code>usethis::create_from_github()</code>, and then initiate a new branch with <code>usethis::pr_init()</code>.</li>
-<li>Look at the build status before and after making changes. The <code>README</code> contains badges for any continuous integration services used by the package.</li>
-<li>New code should follow the tidyverse <a href="http://style.tidyverse.org" class="external-link">style guide</a>. You can use the <a href="https://CRAN.R-project.org/package=styler" class="external-link">styler</a> package to apply these styles, but please don’t restyle code that has nothing to do with your PR.</li>
-<li>For user-facing changes, add a bullet to the top of <code>NEWS.md</code> below the current development version header describing the changes made followed by your GitHub username, and links to relevant issue(s)/PR(s).</li>
-<li>We use <a href="https://cran.r-project.org/package=testthat" class="external-link">testthat</a>. Contributions with test cases included are easier to accept.</li>
-<li>If your contribution spans the use of more than one package, consider building <a href="https://github.com/tidymodels/extratests" class="external-link">extratests</a> with your changes to check for breakages and/or adding new tests there. Let us know in your PR if you ran these extra tests.</li>
+<p>Before you submit 🎯 a pull request on a tidymodels package, always
+file an issue and confirm the tidymodels team agrees with your idea and
+is happy with your basic proposal.</p>
+<p>The <a href="https://www.tidymodels.org/packages/" class="external-link">tidymodels
+packages</a> work together. Each package contains its own unit tests,
+while integration tests and other tests using all the packages are
+contained in <a href="https://github.com/tidymodels/extratests" class="external-link">extratests</a>.</p>
+<ul><li>For pull requests, we recommend that you <a href="https://usethis.r-lib.org/articles/articles/pr-functions.html" class="external-link">create
+a fork of this repo</a> with <code><a href="https://usethis.r-lib.org/reference/create_from_github.html" class="external-link">usethis::create_from_github()</a></code>,
+and then initiate a new branch with
+<code><a href="https://usethis.r-lib.org/reference/pull-requests.html" class="external-link">usethis::pr_init()</a></code>.</li>
+<li>Look at the build status before and after making changes. The
+<code>README</code> contains badges for any continuous integration
+services used by the package.</li>
+<li>New code should follow the tidyverse <a href="http://style.tidyverse.org" class="external-link">style guide</a>. You can use the <a href="https://CRAN.R-project.org/package=styler" class="external-link">styler</a> package to
+apply these styles, but please don’t restyle code that has nothing to do
+with your PR.</li>
+<li>For user-facing changes, add a bullet to the top of
+<code>NEWS.md</code> below the current development version header
+describing the changes made followed by your GitHub username, and links
+to relevant issue(s)/PR(s).</li>
+<li>We use <a href="https://cran.r-project.org/package=testthat" class="external-link">testthat</a>.
+Contributions with test cases included are easier to accept.</li>
+<li>If your contribution spans the use of more than one package,
+consider building <a href="https://github.com/tidymodels/extratests" class="external-link">extratests</a> with your
+changes to check for breakages and/or adding new tests there. Let us
+know in your PR if you ran these extra tests.</li>
 </ul><div class="section level3">
 <h3 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a></h3>
-<p>This project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>This project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html" class="external-link">Contributor
+Code of Conduct</a>. By contributing to this project, you agree to abide
+by its terms.</p>
 </div>
 </div>
 </div>
@@ -81,11 +109,13 @@
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p></p><p>Developed by <a href="https://juliasilge.com/" class="external-link">Julia Silge</a>, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
+  <p></p><p>Developed by <a href="https://juliasilge.com/" class="external-link">Julia Silge</a>,
+<a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
   </div></footer></body></html>
