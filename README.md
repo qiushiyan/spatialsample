@@ -124,6 +124,7 @@ walk(folds_kmedoids$splits, plot_splits)
 ``` r
 block_folds <- spatial_block_cv(ames, coords = c(Longitude, Latitude), 
                  allocation = "systematic", 
+                 crs = 4269, 
                  save_blocks = TRUE)
 
 block_folds
@@ -149,12 +150,8 @@ attr(block_folds, "blocks") |>
   geom_sf(aes(fill = folds), show.legend = FALSE) + 
   geom_sf_text(aes(label = folds)) + 
   geom_sf(data = sf::st_as_sf(ames, coords = c("Longitude", "Latitude"),
-                              crs = 4326), color = "black", fill = "white") + 
-  scale_fill_brewer(type = "qual") 
-#> Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-#> give correct results for longitude/latitude data
-#> Warning in RColorBrewer::brewer.pal(n, pal): n too large, allowed maximum for palette Accent is 8
-#> Returning the palette you asked for with that many colors
+                              crs = 4269)) + 
+  scale_fill_brewer() 
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
